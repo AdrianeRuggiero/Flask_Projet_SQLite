@@ -37,16 +37,20 @@ def lecture():
 @app.route('/authentification', methods=['GET', 'POST'])
 def authentification():
     if request.method == 'POST':
-        # Vérifier les identifiants
-        if request.form['username'] == 'admin' and request.form['password'] == 'password': # password à cacher par la suite
+        # Vérifier les identifiants pour l'utilisateur spécifique
+        if request.form['username'] == 'user' and request.form['password'] == '12345': 
+            session['user_authenticated'] = True
+            return redirect(url_for('search_client_by_name'))
+        # Vérifier les identifiants pour les administrateurs
+        elif request.form['username'] == 'admin' and request.form['password'] == 'password': 
             session['authentifie'] = True
-            # Rediriger vers la route lecture après une authentification réussie
             return redirect(url_for('lecture'))
         else:
             # Afficher un message d'erreur si les identifiants sont incorrects
             return render_template('formulaire_authentification.html', error=True)
 
     return render_template('formulaire_authentification.html', error=False)
+
 
 @app.route('/fiche_client/<int:post_id>')
 def Readfiche(post_id):
