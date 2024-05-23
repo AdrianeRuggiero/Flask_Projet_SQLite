@@ -1,12 +1,21 @@
 from flask import Flask, render_template_string, render_template, jsonify, request, redirect, url_for, session
 from flask import render_template
 from flask import json
+from functools import wraps
 from urllib.request import urlopen
 from werkzeug.utils import secure_filename
 import sqlite3
 
 app = Flask(__name__)                                                                                                                  
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Clé secrète pour les sessions
+
+def user_login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('user_authenticated'):
+            return redirect(url_for('authentification'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Fonction pour créer une clé "authentifie" dans la session utilisateur
 def est_authentifie():
@@ -78,6 +87,7 @@ def enregistrer_client():
     return redirect('/consultation/')  # Rediriger vers la page d'accueil après l'enregistrement
 
 @app.route('/fiche_nom/', methods=['GET'])
+@user_login_required
 def search_client_by_name():
     name = request.args.get('name')
     
