@@ -76,6 +76,23 @@ def enregistrer_client():
     conn.commit()
     conn.close()
     return redirect('/consultation/')  # Rediriger vers la page d'accueil après l'enregistrement
+
+@app.route('/fiche_nom/', methods=['GET'])
+def search_client_by_name():
+    name = request.args.get('name')
+    if not name:
+        return jsonify({'error': 'Name parameter is missing'}), 400
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM clients WHERE nom LIKE ?', ('%' + name + '%',))
+    data = cursor.fetchall()
+    conn.close()
+    
+    if data:
+        return render_template('read_data.html', data=data)
+    else:
+        return jsonify({'message': 'No clients found'}), 404
                                                                                                                                        
 if __name__ == "__main__":
   app.run(debug=True)
