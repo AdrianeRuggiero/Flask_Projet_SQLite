@@ -78,21 +78,29 @@ def enregistrer_client():
     return redirect('/consultation/')  # Rediriger vers la page d'accueil après l'enregistrement
 
 @app.route('/fiche_nom/', methods=['GET'])
+@login_required
 def search_client_by_name():
     name = request.args.get('name')
-    if not name:
-        return jsonify({'error': 'Name parameter is missing'}), 400
-
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM clients WHERE nom LIKE ?', ('%' + name + '%',))
-    data = cursor.fetchall()
-    conn.close()
     
-    if data:
-        return render_template('read_data.html', data=data)
-    else:
-        return jsonify({'message': 'No clients found'}), 404
-                                                                                                                                       
+    if not name:
+        return render_template('formulaire_recherche.html', data=None, message=None)
+
+    try:
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM clients WHERE nom LIKE ?', ('%' + name + '%',))
+        data = cursor.fetchall()
+        conn.close()
+        
+        if data:
+            return render_template('formulaire_recherche.html', data=data, message=None)
+        else:
+            return render_template('formulaire_recherche.html', data=None, message='Aucun client trouvé')
+    
+    except Exception as e:
+        print(f"Erreur lors de l'accès à la base de données: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+
 if __name__ == "__main__":
   app.run(debug=True)
