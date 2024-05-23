@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Recherche de Clients</title>
+</head>
+<body>
+    <h1>Recherche de Clients par Nom</h1>
+    <form action="{{ url_for('search_client_by_name') }}" method="get">
+        <label for="name">Nom:</label>
+        <input type="text" id="name" name="name" required>
+        <input type="submit" value="Rechercher">
+    </form>
+    {% if data %}
+        <h2>Résultats de la Recherche</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Création</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Adresse</th>
+            </tr>
+            {% for row in data %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+</body>
+</html>
