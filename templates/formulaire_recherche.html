@@ -12,8 +12,8 @@
         <input type="submit" value="Rechercher">
     </form>
     {% if data %}
-        <h2>Résultats de la Recherche</h2>
-        <table>
+        <h2 id="results">Résultats de la Recherche</h2>
+        <table aria-describedby="results">
             <tr>
                 <th>ID</th>
                 <th>Création</th>
